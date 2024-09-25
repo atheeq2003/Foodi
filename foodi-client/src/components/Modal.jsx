@@ -41,6 +41,10 @@ const Modal = () => {
                         <input type="submit" value="Login" className="btn bg-green text-white" />
                     </div>
                     <p className='text-center my-2'>Do not have an account? <Link to="/signup" className='underline text-red ml-1'>Signup Now</Link></p>
+                    <button 
+                    htmlFor="my_modal_3"
+                    onClick={() => document.getElementById('my_modal_3').close()}
+                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                 </form>
                 <div className='text-center space-x-3 mb-5'>
                     <button className="btn btn-circle btn-outline hover:bg-green hover:text-white">

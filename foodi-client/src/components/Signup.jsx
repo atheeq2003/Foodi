@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { FaGoogle, FaFacebookF, FaGithub } from "react-icons/fa";
 import { useForm } from "react-hook-form";
+import Modal from './Modal';
 
 const Signup = () => {
     const { register, handleSubmit, formState: { errors } } = useForm()
@@ -11,7 +12,7 @@ const Signup = () => {
         <div className="h-screen flex justify-center items-center">
             <div className="modal-box m-0 flex flex-col justify-center items-center">
                 <form onSubmit={handleSubmit(onSubmit)} className="card-body" method='dialog'>
-                    <h3 className='font-bold text-lg'>Please Login!</h3>
+                    <h3 className='font-bold text-lg'>Create A Account!</h3>
                     {/* email */}
                     <div className="form-control">
                         <label className="label">
@@ -32,9 +33,14 @@ const Signup = () => {
 
                     {/* login btn */}
                     <div className="form-control mt-6">
-                        <input type="submit" value="Login" className="btn bg-green text-white" />
+                        <input type="submit" value="Signup" className="btn bg-green text-white" />
                     </div>
-                    <p className='text-center my-2'>Do not have an account? <Link to="/signup" className='underline text-red ml-1'>Signup Now</Link></p>
+                    <p className='text-center my-2'>Have an account? <button to="/signup" className='underline text-red ml-1'
+                    onClick={() => document.getElementById('my_modal_3').showModal()}
+                    >Login</button></p>
+                    <Link 
+                    to="/"
+                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</Link>
                 </form>
                 <div className='text-center space-x-3 mb-5'>
                     <button className="btn btn-circle btn-outline hover:bg-green hover:text-white">
@@ -48,7 +54,9 @@ const Signup = () => {
                     </button>
                 </div>
             </div>
+            <Modal/>
         </div>
+        
     )
 }
 
