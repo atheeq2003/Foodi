@@ -45,7 +45,7 @@ const AuthProvider = ({ children }) => {
       displayName: name,
       photoURL: photoURL,
     }).then(() => {
-      setUser(auth.currentUser); // Update the user state
+      setUser({ ...auth.currentUser, displayName: name, photoURL: photoURL });
     }).catch((error) => {
       console.error("Error updating profile:", error);
     });
