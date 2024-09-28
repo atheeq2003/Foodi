@@ -40,10 +40,14 @@ const AuthProvider = ({ children }) => {
   };
 
   // update profile
-  const updateuserProfile = (name, photo) => {
-    updateProfile(auth.currentUser, {
+  const updateUserProfile = (name, photoURL) => {
+    return updateProfile(auth.currentUser, {
       displayName: name,
       photoURL: photoURL,
+    }).then(() => {
+      setUser(auth.currentUser); // Update the user state
+    }).catch((error) => {
+      console.error("Error updating profile:", error);
     });
   };
 
@@ -51,15 +55,14 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-        setUser(currentUser);
-        setLoading(false);
-      } else {
+        setUser(currentUser); // Ensure currentUser contains photoURL
+        console.log("Logged in user:", currentUser); // Check photoURL here
+        setLoading(false)
       }
     });
-    return () => {
-      return unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
+  
 
   const authInfo = {
     user,
@@ -67,7 +70,8 @@ const AuthProvider = ({ children }) => {
     signUpWithGmail,
     login,
     logout,
-    updateuserProfile,
+    updateUserProfile,
+    loading
   };
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
