@@ -35,8 +35,8 @@ const AuthProvider = ({ children }) => {
   };
 
   // logout
-  const logout = () => {
-    signOut(auth);
+  const logOut = () => {
+    return signOut(auth);
   };
 
   // update profile
@@ -55,10 +55,11 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-        setUser(currentUser); // Ensure currentUser contains photoURL
-        console.log("Logged in user:", currentUser); // Check photoURL here
-        setLoading(false)
+        setUser(currentUser);
+      } else {
+        setUser(null); // Set user to null on logout
       }
+      setLoading(false); // Make sure loading is stopped
     });
     return () => unsubscribe();
   }, []);
@@ -69,9 +70,9 @@ const AuthProvider = ({ children }) => {
     createUser,
     signUpWithGmail,
     login,
-    logout,
+    logOut,
     updateUserProfile,
-    loading
+    loading,
   };
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
