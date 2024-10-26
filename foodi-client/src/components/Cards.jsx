@@ -1,14 +1,19 @@
 import React, { useContext } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaHeart } from "react-icons/fa";
 import { AuthContext } from "../contexts/AuthProvider";
+import Swal from "sweetalert2";
+
 const Cards = ({ item }) => {
   const { name, image, price, recipe, _id } = item;
   // console.log(item)
   const [isHeartFilled, setIsHeartFilled] = useState(false);
   const { user } = useContext(AuthContext);
   // console.log(user)
+
+  const navigate = useNavigate();
+  const location = useLocation();   
 
   // add to cart btn
   const handleAddtoCart = (item) => {
@@ -26,14 +31,38 @@ const Cards = ({ item }) => {
       fetch("http://localhost:5000/carts", {
         method: "POST",
         headers: {
-            'content-type': "application/json"
+          "content-type": "application/json",
         },
-        body:JSON.stringify(cartItem)
+        body: JSON.stringify(cartItem),
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
+          // console.log(data);
+          if (data.insertedId) {
+            Swal.fire({
+              position: "top-center",
+              icon: "success",
+              title: "Added to Cart",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          }
         });
+    }
+    else {
+        Swal.fire({
+            title: "Please Login",
+            text: "Cannot add items without an account",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Signup Now!"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              navigate('/signup', {state:{from: location}})
+            }
+          });
     }
   };
 
