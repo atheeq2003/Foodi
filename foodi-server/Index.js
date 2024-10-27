@@ -59,7 +59,7 @@ async function run() {
     // get specific cart
     app.get("/carts/:id", async (req, res) => {
       const id = req.params.id;
-      const filter = { _id: new ObjectId(id)};
+      const filter = { _id: new ObjectId(id) };
       const result = await cartCollections.findOne(filter);
       res.send(result);
     });
@@ -67,9 +67,27 @@ async function run() {
     // delete items from cart
     app.delete("/carts/:id", async (req, res) => {
       const id = req.params.id;
-      const filter = { _id: new ObjectId(id)};
+      const filter = { _id: new ObjectId(id) };
       const result = await cartCollections.deleteOne(filter);
       res.send(result);
+    });
+
+    // update carts quantity
+    app.put("/carts/:id", async (req, res) => {
+      const id = req.params.id;
+      const { quantity } = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          quantity: parseInt(quantity, 10),
+        },
+      };
+      const result = await cartCollections.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
     });
 
     await client.db("admin").command({ ping: 1 });

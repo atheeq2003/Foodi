@@ -1,11 +1,81 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import useCart from "../../hooks/useCart";
 import { FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../contexts/AuthProvider";
 const CartPage = () => {
   const [cart, refetch] = useCart();
-  const {user} = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
+  const [cartItems, setcartItems] = useState([]);
+
+  // calculate price
+  const calculatePrice = (item) => {
+    return item.price * item.quantity;
+  };
+
+  // handleIncrease function
+  const handleIncrease = (item) => {
+    // console.log(item._id);
+    fetch(`http://localhost:5000/carts/${item._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify({ quantity: item.quantity + 1 }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const updatedCart = cartItems.map((cartItem) => {
+          if (cartItems.id === item.id) {
+            return {
+              ...cartItem,
+              quantity: cartItem.quantity + 1,
+            };
+          }
+          return cartItem;
+        });
+        refetch();
+        setcartItems(updatedCart);
+      });
+    refetch();
+  };
+
+  // handleDecrease function
+  const handleDecrease = (item) => {
+    // console.log(item._id);
+    if (item.quantity > 1) {
+      fetch(`http://localhost:5000/carts/${item._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify({ quantity: item.quantity - 1 }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          const updatedCart = cartItems.map((cartItem) => {
+            if (cartItems.id === item.id) {
+              return {
+                ...cartItem,
+                quantity: cartItem.quantity - 1,
+              };
+            }
+            return cartItem;
+          });
+          refetch();
+          setcartItems(updatedCart);
+        });
+      refetch();
+    } else {
+      alert("Item cannot be zero");
+    }
+  };
+
+  // calculate total price
+  const cartSubTotal = cart.reduce((total, item)) => {
+    return total + calculatePrice(item);
+  }, 0);
+
   //handleDelete button
   const handleDelete = (item) => {
     Swal.fire({
@@ -80,8 +150,27 @@ const CartPage = () => {
                     </div>
                   </td>
                   <td className="font-medium">{item.name}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.price}</td>
+                  <td>
+                    <button
+                      className="btn btn-xs"
+                      onClick={() => handleDecrease(item)}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      value={item.quantity}
+                      onChange={() => console.log(item.quantity)}
+                      className="w-10 mx-2 text-center overflow-hidden appearance-none"
+                    />
+                    <button
+                      className="btn btn-xs"
+                      onClick={() => handleIncrease(item)}
+                    >
+                      +
+                    </button>
+                  </td>
+                  <td>${calculatePrice(item).toFixed(2)}</td>
                   <th>
                     <button
                       className="btn btn-ghost text-red btn-xs"
@@ -100,16 +189,19 @@ const CartPage = () => {
       {/* customer details */}
       <div className="my-12 flex flex-col md:flex-row justify-between items-start">
         <div className="md:w-1/2 space-y-3">
-              <h3 className="text-lg font-medium">Customer Details</h3>
-              <p>Name: {user.displayName}</p>
-              <p>Email: {user.email}</p>
-              <p>User Id: {user.uid}</p>
+          <h3 className="text-lg font-medium">Customer Details</h3>
+          <p>Name: {user.displayName}</p>
+          <p>Email: {user.email}</p>
+          <p>User Id: {user.uid}</p>
         </div>
         <div className="md:w-1/2 space-y-3">
-              <h3 className="text-lg font-medium">Shopping Details</h3>
-              <p>Total Items: {cart.length}</p>
-              <p>Total Price: 0</p>
-              <button className="btn bg-green text-white"> Proceed Checkout </button>
+          <h3 className="text-lg font-medium">Shopping Details</h3>
+          <p>Total Items: {cart.length}</p>
+          <p>Total Price: 0</p>
+          <button className="btn bg-green text-white">
+            {" "}
+            Proceed Checkout{" "}
+          </button>
         </div>
       </div>
     </div>
