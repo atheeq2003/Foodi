@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import useCart from "../../hooks/useCart";
 import { FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { AuthContext } from "../../contexts/AuthProvider";
 const CartPage = () => {
   const [cart, refetch] = useCart();
-
+  const {user} = useContext(AuthContext)
   //handleDelete button
   const handleDelete = (item) => {
     Swal.fire({
@@ -48,6 +49,7 @@ const CartPage = () => {
           </div>
         </div>
       </div>
+
       {/* table for the cart */}
       <div>
         <div className="overflow-x-auto">
@@ -92,6 +94,22 @@ const CartPage = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* customer details */}
+      <div className="my-12 flex flex-col md:flex-row justify-between items-start">
+        <div className="md:w-1/2 space-y-3">
+              <h3 className="text-lg font-medium">Customer Details</h3>
+              <p>Name: {user.displayName}</p>
+              <p>Email: {user.email}</p>
+              <p>User Id: {user.uid}</p>
+        </div>
+        <div className="md:w-1/2 space-y-3">
+              <h3 className="text-lg font-medium">Shopping Details</h3>
+              <p>Total Items: {cart.length}</p>
+              <p>Total Price: 0</p>
+              <button className="btn bg-green text-white"> Proceed Checkout </button>
         </div>
       </div>
     </div>
