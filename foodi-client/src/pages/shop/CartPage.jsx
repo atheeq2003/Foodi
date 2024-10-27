@@ -26,7 +26,7 @@ const CartPage = () => {
       .then((res) => res.json())
       .then((data) => {
         const updatedCart = cartItems.map((cartItem) => {
-          if (cartItems.id === item.id) {
+          if (cartItem.id === item.id) {
             return {
               ...cartItem,
               quantity: cartItem.quantity + 1,
@@ -34,10 +34,9 @@ const CartPage = () => {
           }
           return cartItem;
         });
-        refetch();
         setcartItems(updatedCart);
+        refetch();
       });
-    refetch();
   };
 
   // handleDecrease function
@@ -54,7 +53,7 @@ const CartPage = () => {
         .then((res) => res.json())
         .then((data) => {
           const updatedCart = cartItems.map((cartItem) => {
-            if (cartItems.id === item.id) {
+            if (cartItem.id === item.id) {
               return {
                 ...cartItem,
                 quantity: cartItem.quantity - 1,
@@ -62,19 +61,20 @@ const CartPage = () => {
             }
             return cartItem;
           });
-          refetch();
           setcartItems(updatedCart);
+          refetch();
         });
-      refetch();
     } else {
       alert("Item cannot be zero");
     }
   };
 
   // calculate total price
-  const cartSubTotal = cart.reduce((total, item)) => {
+  const cartSubTotal = cart.reduce((total, item) => {
     return total + calculatePrice(item);
   }, 0);
+
+  const orderTotal = cartSubTotal;
 
   //handleDelete button
   const handleDelete = (item) => {
@@ -170,7 +170,7 @@ const CartPage = () => {
                       +
                     </button>
                   </td>
-                  <td>${calculatePrice(item).toFixed(2)}</td>
+                  <td>{calculatePrice(item).toFixed(2)}</td>
                   <th>
                     <button
                       className="btn btn-ghost text-red btn-xs"
@@ -197,7 +197,7 @@ const CartPage = () => {
         <div className="md:w-1/2 space-y-3">
           <h3 className="text-lg font-medium">Shopping Details</h3>
           <p>Total Items: {cart.length}</p>
-          <p>Total Price: 0</p>
+          <p>Total Price: {orderTotal.toFixed(2)}</p>
           <button className="btn bg-green text-white">
             {" "}
             Proceed Checkout{" "}
